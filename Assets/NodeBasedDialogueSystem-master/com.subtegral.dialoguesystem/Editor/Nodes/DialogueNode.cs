@@ -9,7 +9,6 @@ namespace Subtegral.DialogueSystem.Editor
 {
     public class DialogueNode : Node
     {
-        public 
         public string DialogueText;
         public string GUID;
         public bool EntyPoint = false;
