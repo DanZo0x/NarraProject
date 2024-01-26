@@ -140,6 +140,9 @@ namespace Subtegral.DialogueSystem.Editor
             tempDialogueNode.SetPosition(new Rect(position,
                 DefaultNodeSize)); //To-Do: implement screen center instantiation positioning
 
+
+            
+
             var textField = new TextField("");
             textField.RegisterValueChangedCallback(evt =>
             {
@@ -176,14 +179,32 @@ namespace Subtegral.DialogueSystem.Editor
                 value = outputPortName
             };
             textField.RegisterValueChangedCallback(evt => generatedPort.portName = evt.newValue);
+
+
             generatedPort.contentContainer.Add(new Label("  "));
             generatedPort.contentContainer.Add(textField);
+
+            /*var textField = new TextField()
+            {
+                name = string.Empty,
+                value = outputPortName
+            };
+            textField.RegisterValueChangedCallback(evt => generatedPort.portName = evt.newValue);
+            var label = new Label(textField.value);
+            generatedPort.contentContainer.Add(label);
+            generatedPort.contentContainer.Add(new Label("  "));
+
+            generatedPort.contentContainer.Add(textField);*/
+
+
+
             var deleteButton = new Button(() => RemovePort(nodeCache, generatedPort))
             {
                 text = "X"
             };
             generatedPort.contentContainer.Add(deleteButton);
             generatedPort.portName = outputPortName;
+            
             nodeCache.outputContainer.Add(generatedPort);
             nodeCache.RefreshPorts();
             nodeCache.RefreshExpandedState();
