@@ -109,7 +109,14 @@ namespace TCG.Core.Dialogues
             _textInfo = Typer.TextField.textInfo;
             _cachedMeshInfo = _textInfo.CopyMeshInfoVertexData();
         }
-
+        protected void _ApplyTextureToMesh(Material m)
+        {
+            if (_textInfo == null) return;
+            for (int i = 0; i < _textInfo.meshInfo.Length; i++)
+            {
+                _textInfo.meshInfo[i].material = m;
+            }
+        }
         private void _OnTMProChanged(Object obj)
         {
             _CacheTextMeshInfo();

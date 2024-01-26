@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
+
 namespace Subtegral.DialogueSystem.Editor
 {
     public class DialogueNode : Node
@@ -13,3 +14,4 @@ namespace Subtegral.DialogueSystem.Editor
         public bool EntyPoint = false;
     }
 }
+
