@@ -176,7 +176,8 @@ namespace Subtegral.DialogueSystem.Editor
             var textField = new TextField()
             {
                 name = string.Empty,
-                value = outputPortName
+                value = outputPortName,
+                style = {width = 100, height = 20}
             };
             textField.RegisterValueChangedCallback(evt => generatedPort.portName = evt.newValue);
 
