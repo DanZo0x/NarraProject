@@ -6,8 +6,10 @@ using Subtegral.DialogueSystem.DataContainers;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
+using static UnityEditor.Experimental.GraphView.Port;
 using Button = UnityEngine.UIElements.Button;
 
 namespace Subtegral.DialogueSystem.Editor
@@ -120,10 +122,15 @@ namespace Subtegral.DialogueSystem.Editor
 
         public void CreateNewDialogueNode(string nodeName, Vector2 position)
         {
-            AddElement(CreateNode(nodeName, position));
+            AddElement(CreateDialogueNode(nodeName, position));
         }
 
-        public DialogueNode CreateNode(string nodeName, Vector2 position)
+        public void CreateNewConditionNode(Vector2 position)
+        {
+            AddElement(CreateConditionNode(position));
+        }
+
+        public DialogueNode CreateDialogueNode(string nodeName, Vector2 position)
         {
             var tempDialogueNode = new DialogueNode()
             {
@@ -131,8 +138,8 @@ namespace Subtegral.DialogueSystem.Editor
                 DialogueText = nodeName,
                 GUID = Guid.NewGuid().ToString()
             };
-            tempDialogueNode.styleSheets.Add(Resources.Load<StyleSheet>("Node"));
-            var inputPort = GetPortInstance(tempDialogueNode, Direction.Input, Port.Capacity.Multi);
+            tempDialogueNode.styleSheets.Add(Resources.Load<StyleSheet>("DialogueNodeStyle"));
+            var inputPort = GetPortInstanceDialogue(tempDialogueNode, Direction.Input, Port.Capacity.Multi);
             inputPort.portName = "Input";
             tempDialogueNode.inputContainer.Add(inputPort);
             tempDialogueNode.RefreshExpandedState();
@@ -160,10 +167,58 @@ namespace Subtegral.DialogueSystem.Editor
             return tempDialogueNode;
         }
 
+        public ConditionNode CreateConditionNode(Vector2 position)
+        {
+            var tempConditionNode = new ConditionNode()
+            {
+                title = "Condition",
+                
+                GUID = Guid.NewGuid().ToString()
+            };
+            tempConditionNode.styleSheets.Add(Resources.Load<StyleSheet>("ConditionNodeStyle"));
+            var inputPort = GetPortInstanceCondition(tempConditionNode, Direction.Input, Port.Capacity.Multi);
+            inputPort.portName = "Condition";
+            tempConditionNode.inputContainer.Add(inputPort);
+            tempConditionNode.RefreshExpandedState();
+            tempConditionNode.RefreshPorts();
+            tempConditionNode.SetPosition(new Rect(position,
+                DefaultNodeSize));
+
+
+
+
+            AddConditionPort(tempConditionNode, true);
+            AddConditionPort(tempConditionNode, false);
+
+            
+            return tempConditionNode;
+        }
+
+        private void AddConditionPort(ConditionNode nodeCache, bool value)
+        {
+            var generatedPort = nodeCache.InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, typeof(float));
+            var portLabel = generatedPort.contentContainer.Q<Label>("type");
+            generatedPort.contentContainer.Remove(portLabel);
+
+            if (value)
+            {
+                generatedPort.portName = "True";
+            }
+            else
+            {
+                generatedPort.portName = "False";
+            }
+            
+
+            nodeCache.outputContainer.Add(generatedPort);
+            nodeCache.RefreshPorts();
+            nodeCache.RefreshExpandedState();
+
+        }
 
         public void AddChoicePort(DialogueNode nodeCache, string overriddenPortName = "")
         {
-            var generatedPort = GetPortInstance(nodeCache, Direction.Output);
+            var generatedPort = GetPortInstanceDialogue(nodeCache, Direction.Output);
             var portLabel = generatedPort.contentContainer.Q<Label>("type");
             generatedPort.contentContainer.Remove(portLabel);
 
@@ -227,10 +282,16 @@ namespace Subtegral.DialogueSystem.Editor
             node.RefreshExpandedState();
         }
 
-        private Port GetPortInstance(DialogueNode node, Direction nodeDirection,
+        private Port GetPortInstanceDialogue(DialogueNode node, Direction nodeDirection,
             Port.Capacity capacity = Port.Capacity.Single)
         {
             return node.InstantiatePort(Orientation.Horizontal, nodeDirection, capacity, typeof(float));
+        }
+
+        private Port GetPortInstanceCondition(ConditionNode node, Direction nodeDirection,
+            Port.Capacity capacity = Port.Capacity.Single)
+        {
+            return node.InstantiatePort(Orientation.Horizontal, nodeDirection, capacity, typeof(bool));
         }
 
         private DialogueNode GetEntryPointNodeInstance()
@@ -243,7 +304,7 @@ namespace Subtegral.DialogueSystem.Editor
                 EntyPoint = true
             };
 
-            var generatedPort = GetPortInstance(nodeCache, Direction.Output);
+            var generatedPort = GetPortInstanceDialogue(nodeCache, Direction.Output);
             generatedPort.portName = "Next";
             nodeCache.outputContainer.Add(generatedPort);
 

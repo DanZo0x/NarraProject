@@ -40,6 +40,10 @@ namespace Subtegral.DialogueSystem.Editor
                 {
                     level = 1,
                     userData = new Group()
+                },
+                new SearchTreeEntry(new GUIContent("Condition Node", _indentationIcon))
+                {
+                    level = 1, userData = new ConditionNode()
                 }
             };
 
@@ -56,6 +60,9 @@ namespace Subtegral.DialogueSystem.Editor
             {
                 case DialogueNode dialogueNode:
                     _graphView.CreateNewDialogueNode("Dialogue Node",graphMousePosition);
+                    return true;
+                case ConditionNode conditionNode:
+                    _graphView.CreateNewConditionNode(graphMousePosition);
                     return true;
                 case Group group:
                     var rect = new Rect(graphMousePosition, _graphView.DefaultCommentBlockSize);

@@ -7,10 +7,9 @@ using UnityEngine;
 
 namespace Subtegral.DialogueSystem.Editor
 {
-    public class DialogueNode : Node
+    public class ConditionNode : Node
     {
         /*public SpeakerData speaker;*/
-        public string DialogueText;
         public string GUID;
         public bool EntyPoint = false;
     }
